@@ -57,7 +57,7 @@
                 float tileMultiplierBase = 10;
                 float tileMultiplierDistort = 6;
 
-                float4 waterColor = float4(0, 0.9, 1, 1) - tex2D(_SurfaceNoise, i.noiseUV * .5).r * .3;
+                float4 waterColor = .5 * float4(0, 0.9, 1, 1) - tex2D(_SurfaceNoise, i.noiseUV * .5).r * .3 + float4(1,1,1,1) * i.noiseUV.y;
                 float2 distortSample = (tex2D(_SurfaceDistortion, i.distortUV * tileMultiplierDistort).xy * 2 - 1) * _SurfaceDistortionAmount;
                 float2 noiseUV = float2((i.noiseUV.x * tileMultiplierBase + _Time.y * _SurfaceNoiseScroll.x) + distortSample.x, (i.noiseUV.y * tileMultiplierBase + _Time.y * _SurfaceNoiseScroll.y) + distortSample.y);
                 float surfaceNoiseSample = tex2D(_SurfaceNoise, noiseUV).r;
