@@ -4,11 +4,18 @@ public class Move : MonoBehaviour
 {
     bool sinking = false;
 
-    float moveTime = 5f; // seconds
     public GameController gameController;
     public GameObject captain;
 
     public GameObject route;
+    [SerializeField] int step = 0;
+    [SerializeField] float moveTime = 0.2f; // seconds
+
+    public Vector3 stepStartPos;
+
+    private void Awake() {
+        stepStartPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+    }
 
     void Update()
     {
@@ -30,9 +37,29 @@ public class Move : MonoBehaviour
 
             if (gameController.playPhase == GameController.PlayPhase.FollowRoute)
             {
-                float x = Mathf.Lerp(transform.position.x, route.transform.position.x, (Time.time - gameController.moveTimer) / moveTime);
-                float z = Mathf.Lerp(transform.position.z, route.transform.position.z, (Time.time - gameController.moveTimer) / moveTime);
+                Vector3 nextPos = gameController.path[step];
+                if (nextPos == null)
+                {
+                    Debug.Log("lista tyhjä");
+                    return;
+                }
+                float time =  (Time.time - gameController.moveTimer) / moveTime;
+                float x = Mathf.Lerp(stepStartPos.x, nextPos.x, time);
+                float z = Mathf.Lerp(stepStartPos.z, nextPos.z, time);
                 transform.position = new Vector3(x, 1.0f, z);
+                if (time >= 1.0f)
+                {
+                    if (gameController.path[step + 1] != null)
+                    {
+                        step += 1;
+                        gameController.moveTimer = Time.time;
+                        stepStartPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+                        transform.rotation = Quaternion.LookRotation(gameController.path[step] - gameController.path[step + 1]);
+                    } else {
+                        gameController.playPhase = GameController.PlayPhase.Inactive;
+                        // route done
+                    }
+                } 
             }
             /*
             if(Input.GetKey(KeyCode.W))

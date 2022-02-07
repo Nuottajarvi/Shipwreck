@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
@@ -48,6 +49,8 @@ public class GameController : MonoBehaviour
 
     public Phase phase = Phase.ShowCaptain;
     public PlayPhase playPhase = PlayPhase.Inactive;
+
+    public List<Vector3> path = new List<Vector3>();
 
     void Start()
     {

@@ -8,9 +8,13 @@ public class MovePath : MonoBehaviour
     public GameController gameController;
     [SerializeField] Vector2 pos;
     [SerializeField] Vector2 touchpos;
+    [SerializeField] float pathAccuracyTime = 0.1f;
+    private float timer = 0f;
 
     bool touchStarted = false;
     bool clickStarted = false;
+
+
 
     private void Awake()
     {
@@ -33,6 +37,8 @@ public class MovePath : MonoBehaviour
             GetComponent<Renderer>().enabled = true;
             if (Input.touchCount > 0)
             {
+                timer += Time.deltaTime;
+
                 Touch touch = Input.GetTouch(0);
                 touchStarted = true;
                 // Move the route if the screen has the finger moving.
@@ -46,10 +52,17 @@ public class MovePath : MonoBehaviour
                     // Position the route.
                     transform.position = position;
                 }
+                if (timer > pathAccuracyTime)
+                {
+                    timer = 0f;
+                    gameController.path.Add(new Vector3(transform.position.x, transform.position.y, transform.position.z));
+                }
             }
 
             if (Input.GetMouseButton(0))
             {
+                timer += Time.deltaTime;
+
                 Vector2 mousePos = Input.mousePosition;
                 clickStarted = true;
                 // Move the route
@@ -60,10 +73,19 @@ public class MovePath : MonoBehaviour
 
                 // Position the route.
                 transform.position = position;
+
+                if (timer > pathAccuracyTime)
+                {
+                    timer = 0f;
+                    Debug.Log("addpath");
+                    gameController.path.Add(new Vector3(transform.position.x, transform.position.y, transform.position.z));
+                }
             }
+
             if ((touchStarted && Input.touchCount == 0) || (clickStarted && !Input.GetMouseButton(0)))
             {
                 Debug.Log("START!");
+                Debug.Log(gameController.path.Count);
                 touchStarted = false;
                 clickStarted = false;
                 gameController.playPhase = GameController.PlayPhase.FollowRoute;
