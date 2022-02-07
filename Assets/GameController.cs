@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -30,8 +28,16 @@ public class GameController : MonoBehaviour
         Victory
     }
 
+    public enum PlayPhase
+    {
+        Inactive,
+        DrawRoute,
+        FollowRoute
+    }
+
     private bool phaseStarted = false;
     private float timer = 0;
+    public float moveTimer = 0;
     private bool mouseClicked = false;
     private Animator captainAnimator;
     private Animator shipAnimator;
@@ -41,6 +47,7 @@ public class GameController : MonoBehaviour
 
 
     public Phase phase = Phase.ShowCaptain;
+    public PlayPhase playPhase = PlayPhase.Inactive;
 
     void Start()
     {
@@ -119,6 +126,7 @@ public class GameController : MonoBehaviour
                 phaseStarted = false;
                 captainAnimator.SetTrigger("MoveOut");
                 phase = Phase.Play;
+                playPhase = PlayPhase.DrawRoute;
             }
         }
 
