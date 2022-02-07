@@ -15,6 +15,11 @@ public class GameController : MonoBehaviour
     public GameObject fader;
     public Text speech;
 
+    public AudioSource hello;
+    public AudioSource greatjob;
+    public AudioSource mayday;
+    public AudioSource song;
+
     public enum Phase
     {
         ShowCaptain,
@@ -32,6 +37,7 @@ public class GameController : MonoBehaviour
     private Animator shipAnimator;
     private Animator mapAnimator;
     private Animation faderAnimator;
+    private bool playingSound = false;
 
 
     public Phase phase = Phase.ShowCaptain;
@@ -60,6 +66,9 @@ public class GameController : MonoBehaviour
             else if (timer > 2)
             {
                 speechBubble.SetActive(true);
+                if (!playingSound)
+                    hello.Play();
+                playingSound = true;
                 speech.text = "Ahoy sailor!";
             }
             
@@ -67,6 +76,7 @@ public class GameController : MonoBehaviour
             {
                 captainAnimator.SetTrigger("MoveIn");
                 phaseStarted = true;
+                playingSound = false;
                 faderAnimator.Play("FadeIn");
                 timer = 0;
             }
@@ -117,6 +127,7 @@ public class GameController : MonoBehaviour
             if (!phaseStarted)
             {
                 phaseStarted = true;
+                playingSound = false;
                 timer = 0;
             }
             else if (timer > 9)
@@ -132,6 +143,12 @@ public class GameController : MonoBehaviour
             {
                 loseScreen.SetActive(true);
             }
+            else if (timer > 1)
+            {
+                if(!playingSound)
+                    mayday.Play();
+                playingSound = true;
+            }
         }
 
         if (phase == Phase.Victory)
@@ -142,6 +159,8 @@ public class GameController : MonoBehaviour
                 phaseStarted = true;
                 timer = 0;
                 winScreen.SetActive(true);
+                playingSound = false;
+                song.Play();
             }
 
             if (timer > 6)
@@ -157,6 +176,9 @@ public class GameController : MonoBehaviour
             {
                 speechBubble.SetActive(true);
                 speech.text = "Great job!";
+                if (!playingSound)
+                    greatjob.Play();
+                playingSound = true;
             }
         }
 
@@ -167,6 +189,7 @@ public class GameController : MonoBehaviour
     {
         phase = Phase.Fail;
         shipAnimator.SetTrigger("Sink");
+        ship.GetComponent<AudioSource>().Play();
         captainAnimator.SetTrigger("MoveIn");
         captainAnimator.SetTrigger("Drown");
     }
