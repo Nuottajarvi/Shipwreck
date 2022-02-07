@@ -10,6 +10,7 @@ public class MovePath : MonoBehaviour
     [SerializeField] Vector2 touchpos;
 
     bool touchStarted = false;
+    bool clickStarted = false;
 
     private void Awake()
     {
@@ -34,7 +35,7 @@ public class MovePath : MonoBehaviour
             {
                 Touch touch = Input.GetTouch(0);
                 touchStarted = true;
-                // Move the cube if the screen has the finger moving.
+                // Move the route if the screen has the finger moving.
                 if (touch.phase == TouchPhase.Moved)
                 {
                     touchpos = touch.position;
@@ -42,15 +43,29 @@ public class MovePath : MonoBehaviour
                     pos.y = Mathfuncs.Remap(0f, height, 12.7f, -2f, touchpos.y);
 
                     Vector3 position = new Vector3(pos.x, 1.0f, pos.y);
-
-                    // Position the cube.
+                    // Position the route.
                     transform.position = position;
                 }
             }
-            if (touchStarted && Input.touchCount == 0)
+
+            if (Input.GetMouseButton(0))
+            {
+                Vector2 mousePos = Input.mousePosition;
+                clickStarted = true;
+                // Move the route
+                pos.x = Mathfuncs.Remap(0f, width, 3f, -2.7f, mousePos.x);
+                pos.y = Mathfuncs.Remap(0f, height, 12.7f, -2f, mousePos.y);
+
+                Vector3 position = new Vector3(pos.x, 1.0f, pos.y);
+
+                // Position the route.
+                transform.position = position;
+            }
+            if ((touchStarted && Input.touchCount == 0) || (clickStarted && !Input.GetMouseButton(0)))
             {
                 Debug.Log("START!");
                 touchStarted = false;
+                clickStarted = false;
                 gameController.playPhase = GameController.PlayPhase.FollowRoute;
                 gameController.moveTimer = Time.time;
             }
